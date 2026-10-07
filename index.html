@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f3ef">
+  <meta name="description" content="安靜、簡潔、可離線使用的番茄鐘。一次，專注一件事。">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="專注">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%234b5149'/%3E%3Ccircle cx='32' cy='33' r='19' fill='none' stroke='%23f5f3ef' stroke-width='3'/%3E%3Cpath d='M32 20v13l9 5M26 7h12' fill='none' stroke='%23f5f3ef' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js" defer></script>
+  <title>25:00｜專注</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header">
+      <h1><span class="brand-mark" aria-hidden="true">◷</span> 專注 <span class="brand-en">POMODORO</span></h1>
+      <button id="settings-open" class="quiet-button" aria-haspopup="dialog">設定</button>
+    </header>
+    <main>
+      <nav class="modes" aria-label="計時模式">
+        <button data-mode="focus" aria-pressed="true">專注</button>
+        <button data-mode="short" aria-pressed="false">短休息</button>
+        <button data-mode="long" aria-pressed="false">長休息</button>
+      </nav>
+      <section class="timer-panel" aria-label="番茄鐘">
+        <p id="phase-label" class="eyebrow">留一段時間，給眼前的事。</p>
+        <div id="timer" class="timer" role="timer" aria-label="剩餘 25 分 0 秒" aria-live="off">25:00</div>
+        <p id="timer-state" class="timer-state">準備開始</p>
+        <div class="controls">
+          <button id="reset" class="secondary-button" title="重設目前模式的時間">重設</button>
+          <button id="toggle" class="primary-button">開始</button>
+          <button id="skip" class="secondary-button" title="跳到下一階段；跳過專注不計入完成輪數">跳過</button>
+        </div>
+        <div class="cycle">
+          <div id="cycle-dots" class="cycle-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <p>已完成專注 <strong id="rounds">0 / 4</strong></p>
+          <p id="next-phase" class="next-phase">下一段 · 短休息 5 分鐘</p>
+        </div>
+        <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>
+      </section>
+    </main>
+    <footer><span>一次，專注一件事。</span><span id="offline-status">正在準備離線使用</span></footer>
+  </div>
+  <dialog id="settings" aria-labelledby="settings-title">
+    <div class="dialog-header"><h2 id="settings-title">調整你的節奏</h2><button id="settings-close" class="quiet-button" aria-label="關閉設定">關閉</button></div>
+    <form id="settings-form">
+      <p class="section-label">每段時間 <span>分鐘</span></p>
+      <div class="duration-fields">
+        <label>專注<input id="focus-minutes" name="focus" type="number" min="1" max="180" step="1" required inputmode="numeric"></label>
+        <label>短休息<input id="short-minutes" name="short" type="number" min="1" max="180" step="1" required inputmode="numeric"></label>
+        <label>長休息<input id="long-minutes" name="long" type="number" min="1" max="180" step="1" required inputmode="numeric"></label>
+      </div>
+      <p class="help">每完成 4 次專注，進入長休息。時間限 1–180 整數分鐘；儲存後從下一段或重設時套用。</p>
+      <button class="primary-button save-button" type="submit">儲存時間</button>
+    </form>
+    <section class="settings-section" aria-labelledby="notification-title">
+      <h3 id="notification-title">時間到時提醒我</h3>
+      <button id="notifications" class="outline-button">開啟通知</button>
+      <p id="notification-status" class="help" role="status">僅在你按下按鈕後要求授權。</p>
+      <p class="help">開始計時後會啟用柔和提示音。靜音、鎖屏或瀏覽器限制可能讓聲音無法播放。</p>
+    </section>
+    <details class="settings-section">
+      <summary>安裝與使用說明</summary>
+      <p id="ios-help" class="help" hidden>在 Safari 點擊「分享」→「加入主畫面」，即可用 App 視窗開啟。支援的 iOS／iPadOS 版本與主畫面模式才可能提供通知權限。</p>
+      <p class="help">iPhone：Safari「分享」→「加入主畫面」。Android：Chrome 選單「安裝應用程式」或「加入主畫面」。初次連線並完成離線準備後，即可離線使用。</p>
+      <p class="help">自動接續下一段；跳過專注不計入完成輪數。手動切換模式及重設會暫停計時，保留已完成輪數；長休息結束或跳過後，輪數歸零。</p>
+      <p class="help">鎖屏或切到背景時，系統可能暫停網頁，無法保證準時響鈴或通知。回來後會校正目前這段，若已到時，就開始下一段完整時間，不補算離開期間的多輪專注。關閉或重新整理會重新開始；只有時間設定會保留。</p>
+    </details>
+  </dialog>
+  <noscript><p class="noscript">請啟用 JavaScript 才能使用番茄鐘。</p></noscript>
+</body>
+</html>
